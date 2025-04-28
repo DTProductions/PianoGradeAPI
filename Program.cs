@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace PianoGradeAPI {
 	public class Program {
 		public static void Main(string[] args) {
@@ -6,6 +8,8 @@ namespace PianoGradeAPI {
 			// Add services to the container.
 
 			builder.Services.AddControllers();
+
+			builder.Services.AddDbContextPool<GradesContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("GradesDatabase")));
 
 			var app = builder.Build();
 
