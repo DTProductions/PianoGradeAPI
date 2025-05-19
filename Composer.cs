@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace PianoGradeAPI {
 	[Table("composer")]
@@ -16,5 +17,6 @@ namespace PianoGradeAPI {
 
 		[Column("nationality")]
 		public string Nationality { get; set; }
+		public List<Piece> Pieces { get; set; }
 	}
 }
