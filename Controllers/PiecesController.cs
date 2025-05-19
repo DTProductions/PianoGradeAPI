@@ -14,7 +14,7 @@ namespace PianoGradeAPI.Controllers {
 		}
 
 		[HttpGet]
-		public List<GetPieceDto> GetPieces([FromQuery] string? title, [FromQuery] string? composerName, [FromQuery] string? arrangerName, [FromQuery] string? gradingSystem) {
+		public List<GetPieceDto> GetPieces([FromQuery] string? title, [FromQuery] string? composerName, [FromQuery] string? arrangerName, [FromQuery] string? gradingSystem, string? grade) {
 			IQueryable<Piece> query = context.Pieces;
             if (title != null)
             {
@@ -31,6 +31,10 @@ namespace PianoGradeAPI.Controllers {
 
 			if(gradingSystem != null) {
 				query = query.Where(p => p.Grades.Any(g => g.GradingSystem == gradingSystem));
+			}
+
+			if(grade != null) {
+				query = query.Where(p => p.Grades.Any(g => g.GradeScore == grade));
 			}
 
 			List<GetPieceDto> pieces = query.Select(p => new GetPieceDto() {
