@@ -6,6 +6,7 @@ namespace PianoGradeAPI {
 		public DbSet<Composer> Composers { get; set; }
 		public DbSet<Piece> Pieces { get; set; }
 		public DbSet<Arranger> Arrangers { get; set; }
+		public DbSet<Grade> Grades { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder) {
 			modelBuilder.Entity<Piece>()
