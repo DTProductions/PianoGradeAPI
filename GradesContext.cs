@@ -1,12 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata;
 
 namespace PianoGradeAPI {
 	public class GradesContext(DbContextOptions<GradesContext> options) : DbContext(options) {
+
 		public DbSet<Composer> Composers { get; set; }
 		public DbSet<Piece> Pieces { get; set; }
 		public DbSet<Arranger> Arrangers { get; set; }
 		public DbSet<Grade> Grades { get; set; }
+		public DbSet<AppUser> Users { get; set; }
+		public DbSet<Role> Roles { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder) {
 			modelBuilder.Entity<Piece>()
@@ -24,11 +26,19 @@ namespace PianoGradeAPI {
 					r => r.HasOne(typeof(Arranger)).WithMany().HasForeignKey("arranger_id"),
 					l => l.HasOne(typeof(Piece)).WithMany().HasForeignKey("piece_id"),
 					j => j.HasKey("piece_id", "arranger_id"));
-
+			
 			modelBuilder.Entity<Piece>()
 				.HasMany(p => p.Grades)
 				.WithOne(g => g.Piece)
 				.HasForeignKey(g => g.PieceId);
+
+			modelBuilder.Entity<AppUser>()
+				.HasMany(u => u.Roles)
+				.WithMany()
+				.UsingEntity("app_user_roles",
+					r => r.HasOne(typeof(Role)).WithMany().HasForeignKey("role_id"),
+					l => l.HasOne(typeof(AppUser)).WithMany().HasForeignKey("app_user_id"),
+					j => j.HasKey("role_id", "app_user_id"));
 		}
 	}
 }
