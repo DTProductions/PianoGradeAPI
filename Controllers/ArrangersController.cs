@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PianoGradeAPI.Dtos;
 
 namespace PianoGradeAPI.Controllers {
 	[Route("[controller]")]
@@ -20,6 +21,17 @@ namespace PianoGradeAPI.Controllers {
 			}
 
 			return arrangers.Select(a => a.Name).ToList();
+		}
+
+		[HttpPost]
+		public async Task<ActionResult> InsertArranger([FromBody] InsertArrangerDto insertArrangerDto) {
+			Arranger arrangerToAdd = new Arranger() {
+				Name = insertArrangerDto.Name
+			};
+
+			gradesContext.Arrangers.Add(arrangerToAdd);
+			await gradesContext.SaveChangesAsync();
+			return Created();
 		}
 	}
 }
