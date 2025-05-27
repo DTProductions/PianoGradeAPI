@@ -7,15 +7,15 @@ namespace PianoGradeAPI.Controllers {
 	[Route("[controller]")]
 	[ApiController]
 	public class PiecesController : ControllerBase {
-		private GradesContext context;
+		private GradesContext gradesContext;
 
-		public PiecesController(GradesContext context) {
-			this.context = context;
+		public PiecesController(GradesContext gradesContext) {
+			this.gradesContext = gradesContext;
 		}
 
 		[HttpGet]
 		public List<GetPieceDto> GetPieces([FromQuery] string? title, [FromQuery] string? composerName, [FromQuery] string? arrangerName, [FromQuery] string? gradingSystem, string? grade) {
-			IQueryable<Piece> query = context.Pieces;
+			IQueryable<Piece> query = gradesContext.Pieces;
             if (title != null)
             {
 				query = query.Where(p => p.Name.Contains(title));
@@ -48,6 +48,39 @@ namespace PianoGradeAPI.Controllers {
 			}).ToList();
 
 			return pieces;
+		}
+
+		[HttpPost]
+		public async Task<ActionResult> InsertPiece([FromBody] InsertPieceDto insertPieceDto) {
+
+			// composer and arrangers should already exist before registering a piece
+			List<Composer> composers = gradesContext.Composers
+				.Where(c => insertPieceDto.ComposerIds.Contains(c.Id))
+				.ToList();
+
+			List<Arranger> arrangers = gradesContext.Arrangers
+				.Where(a => insertPieceDto.ArrangerIds.Contains(a.Id))
+				.ToList();
+
+			if (composers.Count == 0 || arrangers.Count == 0) {
+				return UnprocessableEntity();
+			}
+
+			List<Grade> grades = insertPieceDto.Grades.Select(g => {
+					Grade gradeToAdd = new Grade() { GradingSystem = g.GradingSystem, GradeScore = g.Grade};
+					return gradeToAdd;
+				}).ToList();
+
+			Piece pieceToAdd = new Piece() {
+				Name = insertPieceDto.Title,
+				Composers = composers,
+				Arrangers = arrangers,
+				Grades = grades
+			};
+
+			gradesContext.Pieces.Add(pieceToAdd);
+			await gradesContext.SaveChangesAsync();
+			return Created();
 		}
 	}
 }
