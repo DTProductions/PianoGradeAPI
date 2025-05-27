@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using PianoGradeAPI.Dtos;
 using System.Runtime.InteropServices;
 
 namespace PianoGradeAPI.Controllers
@@ -24,5 +25,18 @@ namespace PianoGradeAPI.Controllers
             logger.LogInformation("Retrieving composer info...");
             return composers;
         }
-    }
+
+		[HttpPost]
+		public async Task<ActionResult> InsertComposer([FromBody] InsertComposerDto insertComposerDto) {
+			Composer composerToAdd = new Composer() {
+				Name = insertComposerDto.Name,
+				Era = insertComposerDto.Era,
+				Nationality = insertComposerDto.Nationality
+			};
+
+			gradesContext.Composers.Add(composerToAdd);
+			await gradesContext.SaveChangesAsync();
+			return Created();
+		}
+	}
 }

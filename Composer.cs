@@ -13,10 +13,10 @@ namespace PianoGradeAPI {
 		public string Name { get; set; }
 
 		[Column("era")]
-		public string Era { get; set; }
+		public string? Era { get; set; }
 
 		[Column("nationality")]
-		public string Nationality { get; set; }
-		public List<Piece> Pieces { get; set; }
+		public string? Nationality { get; set; }
+		public List<Piece> Pieces { get; set; } = [];
 	}
 }
