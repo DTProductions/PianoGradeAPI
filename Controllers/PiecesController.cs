@@ -82,5 +82,50 @@ namespace PianoGradeAPI.Controllers {
 			await gradesContext.SaveChangesAsync();
 			return Created();
 		}
+
+		[HttpPut]
+		public async Task<ActionResult> UpdatePiece([FromBody] UpdatePieceDto updatePieceDto) {
+			Piece? pieceToUpdate = await gradesContext.Pieces.Include(p => p.Composers).Include(p => p.Arrangers).Include(p => p.Grades).FirstOrDefaultAsync(a => a.Id == updatePieceDto.Id);
+			if (pieceToUpdate == null) {
+				return UnprocessableEntity();
+			}
+
+			List<Grade> grades = updatePieceDto.Grades.Select(g => {
+				Grade gradeToAdd = new Grade() { GradingSystem = g.GradingSystem, GradeScore = g.Grade};
+				return gradeToAdd;
+			}).ToList();
+
+			// composer and arrangers should already exist before registering a piece
+			List<Composer> composers = gradesContext.Composers
+				.Where(c => updatePieceDto.ComposerIds.Contains(c.Id))
+				.ToList();
+
+			List<Arranger> arrangers = gradesContext.Arrangers
+				.Where(a => updatePieceDto.ArrangerIds.Contains(a.Id))
+				.ToList();
+
+			pieceToUpdate.Name = updatePieceDto.Title;
+			pieceToUpdate.Grades = grades;
+			pieceToUpdate.Composers = composers;
+			pieceToUpdate.Arrangers = arrangers;
+
+			gradesContext.Pieces.Update(pieceToUpdate);
+			await gradesContext.SaveChangesAsync();
+
+			return NoContent();
+		}
+
+		[HttpDelete]
+		public async Task<ActionResult> DeletePiece([FromQuery] int id) {
+			Piece? pieceToDelete = await gradesContext.Pieces.Include(p => p.Composers).Include(p => p.Arrangers).Include(p => p.Grades).FirstOrDefaultAsync(p => p.Id == id);
+			if (pieceToDelete == null) {
+				return UnprocessableEntity();
+			}
+
+			gradesContext.Pieces.Remove(pieceToDelete);
+			await gradesContext.SaveChangesAsync();
+
+			return NoContent();
+		}
 	}
 }
