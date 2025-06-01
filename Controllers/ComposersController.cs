@@ -40,6 +40,23 @@ namespace PianoGradeAPI.Controllers
 			return Created();
 		}
 
+        [HttpPut]
+        public async Task<ActionResult> UpdateComposer([FromBody] UpdateComposerDto updateComposerDto) {
+            Composer? composerToUpdate = await gradesContext.Composers.FirstOrDefaultAsync(c => c.Id == updateComposerDto.Id);
+            if(composerToUpdate == null) {
+                return UnprocessableEntity();
+            }
+
+            composerToUpdate.Name = updateComposerDto.Name;
+            composerToUpdate.Era = updateComposerDto.Era;
+            composerToUpdate.Nationality = updateComposerDto.Nationality;
+
+            gradesContext.Composers.Update(composerToUpdate);
+            await gradesContext.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         [HttpDelete]
         public async Task<ActionResult> DeleteComposer([FromQuery] int id) {
             Composer? composerToDelete = await gradesContext.Composers.Include(c => c.Pieces).FirstOrDefaultAsync(c => c.Id == id);
