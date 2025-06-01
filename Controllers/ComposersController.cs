@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PianoGradeAPI.Dtos;
 using System.Runtime.InteropServices;
 
@@ -38,5 +39,17 @@ namespace PianoGradeAPI.Controllers
 			await gradesContext.SaveChangesAsync();
 			return Created();
 		}
+
+        [HttpDelete]
+        public async Task<ActionResult> DeleteComposer([FromQuery] int id) {
+            Composer? composerToDelete = await gradesContext.Composers.Include(c => c.Pieces).FirstOrDefaultAsync(c => c.Id == id);
+            if(composerToDelete == null) {
+                return UnprocessableEntity();
+            }
+
+            gradesContext.Composers.Remove(composerToDelete);
+            await gradesContext.SaveChangesAsync();
+            return NoContent();
+        }
 	}
 }
