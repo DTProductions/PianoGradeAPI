@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PianoGradeAPI.Dtos;
 
 namespace PianoGradeAPI.Controllers {
@@ -32,6 +33,33 @@ namespace PianoGradeAPI.Controllers {
 			gradesContext.Arrangers.Add(arrangerToAdd);
 			await gradesContext.SaveChangesAsync();
 			return Created();
+		}
+
+		[HttpPut]
+		public async Task<ActionResult> UpdateArranger([FromBody] UpdateArrangerDto updateArrangerDto) {
+			Arranger? arrangerToUpdate = await gradesContext.Arrangers.FirstOrDefaultAsync(a => a.Id == updateArrangerDto.Id);
+			if (arrangerToUpdate == null) {
+				return UnprocessableEntity();
+			}
+
+			arrangerToUpdate.Name = updateArrangerDto.Name;
+
+			gradesContext.Arrangers.Update(arrangerToUpdate);
+			await gradesContext.SaveChangesAsync();
+
+			return NoContent();
+		}
+
+		[HttpDelete]
+		public async Task<ActionResult> DeleteArranger([FromQuery] int id) {
+			Arranger? arrangerToDelete = await gradesContext.Arrangers.Include(a => a.Pieces).FirstOrDefaultAsync(a => a.Id == id);
+			if (arrangerToDelete == null) {
+				return UnprocessableEntity();
+			}
+
+			gradesContext.Arrangers.Remove(arrangerToDelete);
+			await gradesContext.SaveChangesAsync();
+			return NoContent();
 		}
 	}
 }
