@@ -1,0 +1,56 @@
+﻿CREATE TABLE IF NOT EXISTS app_user (
+	id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	username VARCHAR(50) UNIQUE NOT NULL,
+	password TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS app_role (
+	id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	name VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS app_user_app_roles (
+	app_role_id INTEGER REFERENCES app_role(id),
+	app_user_id INTEGER REFERENCES app_user(id),
+
+	PRIMARY KEY(app_role_id, app_user_id)
+);
+
+CREATE TABLE IF NOT EXISTS composer (
+	id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	name VARCHAR(50) NOT NULL,
+	era VARCHAR(50),
+	nationality VARCHAR(50)
+);
+
+CREATE TABLE IF NOT EXISTS arranger (
+	id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS piece (
+	id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	name VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS grade (
+	piece_id INTEGER REFERENCES piece(id),
+	grading_system VARCHAR(50),
+	grade VARCHAR(50),
+
+	PRIMARY KEY(piece_id, grading_system, grade)
+);
+
+CREATE TABLE IF NOT EXISTS piece_arranger (
+	piece_id INTEGER REFERENCES piece(id),
+	arranger_id INTEGER REFERENCES arranger(id),
+
+	PRIMARY KEY(piece_id, arranger_id)
+);
+
+CREATE TABLE IF NOT EXISTS piece_composer (
+	piece_id INTEGER REFERENCES piece(id),
+	composer_id INTEGER REFERENCES composer(id),
+
+	PRIMARY KEY(piece_id, composer_id)
+);

@@ -35,7 +35,7 @@ namespace PianoGradeAPI {
 			modelBuilder.Entity<AppUser>()
 				.HasMany(u => u.Roles)
 				.WithMany()
-				.UsingEntity("app_user_roles",
+				.UsingEntity("app_user_app_roles",
 					r => r.HasOne(typeof(Role)).WithMany().HasForeignKey("role_id"),
 					l => l.HasOne(typeof(AppUser)).WithMany().HasForeignKey("app_user_id"),
 					j => j.HasKey("role_id", "app_user_id"));

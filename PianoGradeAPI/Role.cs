@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PianoGradeAPI {
-	[Table("role")]
+	[Table("app_role")]
 	public class Role : IdentityRole<int> {
 		[Column("id")]
 		public override int Id { get; set; }
