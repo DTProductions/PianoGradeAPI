@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PianoGradeAPI.Dtos;
+using System.Collections.Generic;
 
 namespace PianoGradeAPI.Controllers {
 	[Route("[controller]")]
@@ -14,9 +15,17 @@ namespace PianoGradeAPI.Controllers {
 		}
 
 		[HttpGet]
-		public List<GetPieceDto> GetPieces([FromQuery] string? title, [FromQuery] string? composerName, [FromQuery] string? arrangerName, [FromQuery] string? gradingSystem, string? grade) {
+		public List<GetPieceDto> GetPieces([FromQuery] string? title, [FromQuery] string? composerName, [FromQuery] string? arrangerName, [FromQuery] string? gradingSystem, string? grade, [FromQuery] int? sinceId, [FromQuery] int? limit) {
 			IQueryable<Piece> query = gradesContext.Pieces;
-            if (title != null)
+			if (sinceId != null) {
+				query = query.OrderBy(p => p.Id).Where(p => p.Id > sinceId);
+			}
+
+			if (limit != null) {
+				query = query.Take((int)limit);
+			}
+
+			if (title != null)
             {
 				query = query.Where(p => p.Name.Contains(title));
             }

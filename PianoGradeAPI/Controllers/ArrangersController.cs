@@ -15,9 +15,17 @@ namespace PianoGradeAPI.Controllers {
 
 
 		[HttpGet]
-		public List<GetArrangerDto> GetArrangers(string? query) {
+		public List<GetArrangerDto> GetArrangers(string? query, [FromQuery] int? sinceId, [FromQuery] int? limit) {
 			IQueryable<Arranger> arrangers = gradesContext.Arrangers;
-			if(query != null) {
+			if (sinceId != null) {
+				arrangers = arrangers.OrderBy(a => a.Id).Where(a => a.Id > sinceId);
+			}
+
+			if (limit != null) {
+				arrangers = arrangers.Take((int)limit);
+			}
+
+			if (query != null) {
 				arrangers = arrangers.Where(a => a.Name.Contains(query));
 			}
 
