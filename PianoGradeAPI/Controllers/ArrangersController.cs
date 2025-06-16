@@ -35,6 +35,17 @@ namespace PianoGradeAPI.Controllers {
 			}).ToList();
 		}
 
+		[HttpGet]
+		[Route("{id?}")]
+		public async Task<GetArrangerDto?> GetArrangerById(int id) {
+			GetArrangerDto? arranger = await gradesContext.Arrangers.Select(a => new GetArrangerDto() {
+				Id = a.Id,
+				Name = a.Name
+			}).FirstOrDefaultAsync();
+
+			return arranger;
+		}
+
 		[HttpPost]
 		public async Task<ActionResult> InsertArranger([FromBody] InsertArrangerDto insertArrangerDto) {
 			Arranger arrangerToAdd = new Arranger() {
