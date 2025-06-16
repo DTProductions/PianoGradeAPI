@@ -68,7 +68,7 @@ namespace PianoGradeAPI.Controllers {
 
 		[HttpGet]
 		[Route("{id?}")]
-		public async Task<ActionResult<GetPieceDto?>> GetPieceById(int id) {
+		public async Task<ActionResult<GetPieceDto>> GetPieceById(int id) {
 			GetPieceDto? piece = await gradesContext.Pieces.Where(p => p.Id == id).Select(p => new GetPieceDto() {
 				Id = p.Id,
 				Name = p.Name,

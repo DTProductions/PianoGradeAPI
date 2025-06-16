@@ -37,13 +37,17 @@ namespace PianoGradeAPI.Controllers {
 
 		[HttpGet]
 		[Route("{id?}")]
-		public async Task<GetArrangerDto?> GetArrangerById(int id) {
-			GetArrangerDto? arranger = await gradesContext.Arrangers.Select(a => new GetArrangerDto() {
+		public async Task<ActionResult<GetArrangerDto>> GetArrangerById(int id) {
+			GetArrangerDto? arranger = await gradesContext.Arrangers.Where(a => a.Id == id).Select(a => new GetArrangerDto() {
 				Id = a.Id,
 				Name = a.Name
 			}).FirstOrDefaultAsync();
 
-			return arranger;
+			if(arranger == null) {
+				return NotFound();
+			}
+
+			return Ok(arranger);
 		}
 
 		[HttpPost]

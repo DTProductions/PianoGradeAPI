@@ -48,7 +48,7 @@ namespace PianoGradeAPI.Controllers
 
         [HttpGet]
         [Route("{id?}")]
-        public async Task<GetComposerDto?> GetComposerById(int id) {
+        public async Task<ActionResult<GetComposerDto>> GetComposerById(int id) {
 			GetComposerDto? composer = await gradesContext.Composers.Where(c => c.Id == id).Select(c => new GetComposerDto() {
                 Id = c.Id,
                 Name = c.Name,
@@ -56,7 +56,11 @@ namespace PianoGradeAPI.Controllers
                 Nationality = c.Nationality
             }).FirstOrDefaultAsync();
 
-            return composer;
+            if(composer == null) {
+                return NotFound();
+            }
+
+            return Ok(composer);
 		}
 
 		[HttpPost]
