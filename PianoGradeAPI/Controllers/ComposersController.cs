@@ -46,6 +46,19 @@ namespace PianoGradeAPI.Controllers
             return composers;
         }
 
+        [HttpGet]
+        [Route("{id?}")]
+        public async Task<GetComposerDto?> GetComposerById(int id) {
+			GetComposerDto? composer = await gradesContext.Composers.Where(c => c.Id == id).Select(c => new GetComposerDto() {
+                Id = c.Id,
+                Name = c.Name,
+                Era = c.Era,
+                Nationality = c.Nationality
+            }).FirstOrDefaultAsync();
+
+            return composer;
+		}
+
 		[HttpPost]
 		public async Task<ActionResult> InsertComposer([FromBody] InsertComposerDto insertComposerDto) {
 			Composer composerToAdd = new Composer() {
