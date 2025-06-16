@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PianoGradeAPI.Dtos;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace PianoGradeAPI.Controllers
@@ -20,9 +21,27 @@ namespace PianoGradeAPI.Controllers
 		}
 
         [HttpGet]
-        public List<Composer> GetComposerInfoByName([FromQuery] string name)
-        {
-            List<Composer> composers = gradesContext.Composers.Where(c=>c.Name == name).ToList();
+        public List<GetComposerDto> GetComposer([FromQuery] string? name, [FromQuery] int? sinceId, [FromQuery] int? limit) {
+			IQueryable<Composer> query = gradesContext.Composers;
+			if (sinceId != null) {
+				query = query.OrderBy(c => c.Id).Where(c => c.Id > sinceId);
+			}
+
+			if (limit != null) {
+				query = query.Take((int)limit);
+			}
+
+			if (name != null) {
+                query = query.Where(c => c.Name.Contains(name));
+			}
+
+			List<GetComposerDto> composers = query.Select(c=> new GetComposerDto() {
+                Id = c.Id,
+                Name = c.Name,
+                Era = c.Era,
+                Nationality = c.Nationality
+            }).ToList();
+
             logger.LogInformation("Retrieving composer info...");
             return composers;
         }
