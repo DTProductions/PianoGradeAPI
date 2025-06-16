@@ -15,13 +15,16 @@ namespace PianoGradeAPI.Controllers {
 
 
 		[HttpGet]
-		public List<string> GetArrangers(string? query) {
+		public List<GetArrangerDto> GetArrangers(string? query) {
 			IQueryable<Arranger> arrangers = gradesContext.Arrangers;
 			if(query != null) {
 				arrangers = arrangers.Where(a => a.Name.Contains(query));
 			}
 
-			return arrangers.Select(a => a.Name).ToList();
+			return arrangers.Select(a => new GetArrangerDto(){
+				Id = a.Id,
+				Name = a.Name
+			}).ToList();
 		}
 
 		[HttpPost]

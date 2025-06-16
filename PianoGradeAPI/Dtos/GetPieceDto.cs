@@ -2,9 +2,10 @@
 
 namespace PianoGradeAPI.Dtos {
 	public class GetPieceDto {
+		public int Id { get; set; }
 		public string Name { get; set; }
-		public List<string> Composers { get; set; }
-		public List<string> Arrangers { get; set; }
+		public List<GetPieceDtoComposer> Composers { get; set; }
+		public List<GetPieceDtoArranger> Arrangers { get; set; }
 		public List<GetPieceDtoGrade> Grades { get; set; }
 	}
 }

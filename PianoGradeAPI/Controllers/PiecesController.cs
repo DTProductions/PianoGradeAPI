@@ -38,9 +38,16 @@ namespace PianoGradeAPI.Controllers {
 			}
 
 			List<GetPieceDto> pieces = query.Select(p => new GetPieceDto() {
+				Id = p.Id,
 				Name = p.Name,
-				Composers = p.Composers.Select(c => c.Name).ToList(),
-				Arrangers = p.Arrangers.Select(p => p.Name).ToList(),
+				Composers = p.Composers.Select(c => new GetPieceDtoComposer(){
+					Id = c.Id,
+					Name = c.Name
+				}).ToList(),
+				Arrangers = p.Arrangers.Select(p => new GetPieceDtoArranger() {
+					Id = p.Id,
+					Name = p.Name,
+				}).ToList(),
 				Grades = p.Grades.Select(g => new GetPieceDtoGrade() {
 					GradingSystem = g.GradingSystem,
 					Grade = g.GradeScore
