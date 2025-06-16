@@ -66,6 +66,33 @@ namespace PianoGradeAPI.Controllers {
 			return pieces;
 		}
 
+		[HttpGet]
+		[Route("{id?}")]
+		public async Task<ActionResult<GetPieceDto?>> GetPieceById(int id) {
+			GetPieceDto? piece = await gradesContext.Pieces.Where(p => p.Id == id).Select(p => new GetPieceDto() {
+				Id = p.Id,
+				Name = p.Name,
+				Composers = p.Composers.Select(c => new GetPieceDtoComposer() {
+					Id = c.Id,
+					Name = c.Name
+				}).ToList(),
+				Arrangers = p.Arrangers.Select(p => new GetPieceDtoArranger() {
+					Id = p.Id,
+					Name = p.Name,
+				}).ToList(),
+				Grades = p.Grades.Select(g => new GetPieceDtoGrade() {
+					GradingSystem = g.GradingSystem,
+					Grade = g.GradeScore
+				}).ToList()
+			}).FirstOrDefaultAsync();
+
+			if(piece == null) {
+				return NotFound();
+			}
+
+			return Ok(piece);
+		}
+
 		[HttpPost]
 		public async Task<ActionResult> InsertPiece([FromBody] InsertPieceDto insertPieceDto) {
 
