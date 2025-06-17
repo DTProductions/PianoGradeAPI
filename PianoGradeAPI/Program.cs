@@ -20,10 +20,10 @@ namespace PianoGradeAPI {
 			builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme);
 			builder.Services.AddAuthorization();
 
-			builder.Services.AddIdentity<AppUser, Role>().AddEntityFrameworkStores<GradesContext>().AddDefaultTokenProviders();
+			builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<GradesContext>().AddDefaultTokenProviders();
 
 			builder.Services.AddTransient<IUserStore<AppUser>, CustomUserStore>();
-			builder.Services.AddTransient<IRoleStore<Role>, CustomRoleStore>();
+			builder.Services.AddTransient<IRoleStore<AppRole>, CustomRoleStore>();
 
 			builder.Services.ConfigureApplicationCookie(o => {
 				o.ExpireTimeSpan = TimeSpan.FromMinutes(30);

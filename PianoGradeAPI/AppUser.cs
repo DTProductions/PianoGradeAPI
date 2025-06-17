@@ -12,7 +12,7 @@ namespace PianoGradeAPI {
 		public override string UserName { get; set; }
 		[Column("password")]
 		public override string PasswordHash { get; set; }
-		public List<Role> Roles { get; set; } = [];
+		public List<AppRole> Roles { get; set; } = [];
 
 		[NotMapped]
 		public override string? NormalizedUserName { get; set; }

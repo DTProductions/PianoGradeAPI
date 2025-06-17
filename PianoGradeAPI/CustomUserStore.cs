@@ -5,15 +5,15 @@ namespace PianoGradeAPI {
 	public class CustomUserStore : IUserStore<AppUser>, IUserPasswordStore<AppUser>, IUserRoleStore<AppUser> {
 		
 		private GradesContext gradesContext;
-		private IRoleStore<Role> customRoleStore;
+		private IRoleStore<AppRole> customRoleStore;
 
-		public CustomUserStore(GradesContext gradesContext, IRoleStore<Role> customRoleStore) {
+		public CustomUserStore(GradesContext gradesContext, IRoleStore<AppRole> customRoleStore) {
 			this.gradesContext = gradesContext;
 			this.customRoleStore = customRoleStore;
 		}
 
 		public async Task AddToRoleAsync(AppUser user, string roleName, CancellationToken cancellationToken) {
-			Role roleToAdd = await customRoleStore.FindByNameAsync(roleName.ToUpper(), cancellationToken);
+			AppRole roleToAdd = await customRoleStore.FindByNameAsync(roleName.ToUpper(), cancellationToken);
 
 			user.Roles.Add(roleToAdd);
 			gradesContext.Users.Update(user);
@@ -82,7 +82,7 @@ namespace PianoGradeAPI {
 
 		public async Task RemoveFromRoleAsync(AppUser user, string roleName, CancellationToken cancellationToken) {
 			roleName = roleName.ToUpper();
-			Role? roleToRemove = user.Roles.FirstOrDefault(r => r.Name == roleName);
+			AppRole? roleToRemove = user.Roles.FirstOrDefault(r => r.Name == roleName);
 
 			if (roleToRemove == null) {
 				return; 

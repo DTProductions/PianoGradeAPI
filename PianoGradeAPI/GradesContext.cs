@@ -8,7 +8,7 @@ namespace PianoGradeAPI {
 		public DbSet<Arranger> Arrangers { get; set; }
 		public DbSet<Grade> Grades { get; set; }
 		public DbSet<AppUser> Users { get; set; }
-		public DbSet<Role> Roles { get; set; }
+		public DbSet<AppRole> Roles { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder) {
 			modelBuilder.Entity<Piece>()
@@ -35,8 +35,8 @@ namespace PianoGradeAPI {
 			modelBuilder.Entity<AppUser>()
 				.HasMany(u => u.Roles)
 				.WithMany()
-				.UsingEntity("app_user_app_roles",
-					r => r.HasOne(typeof(Role)).WithMany().HasForeignKey("role_id"),
+				.UsingEntity("app_user_app_role",
+					r => r.HasOne(typeof(AppRole)).WithMany().HasForeignKey("role_id"),
 					l => l.HasOne(typeof(AppUser)).WithMany().HasForeignKey("app_user_id"),
 					j => j.HasKey("role_id", "app_user_id"));
 		}
