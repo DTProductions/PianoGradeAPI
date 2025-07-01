@@ -1,0 +1,28 @@
+name: pianogradeapi
+
+networks:
+    apinetwork:
+
+services:
+    database:
+        image: postgres:17
+        environment:
+            POSTGRES_USER: user
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: pianogradeapidb
+        volumes:
+            - db_data:/var/lib/postgresql/data
+        networks:
+            - apinetwork
+
+    database-builder:
+        build: ./DatabaseMigrations
+        command:
+            - Host=database;Port=5432;Database=pianogradeapidb;Username=user;Password=password
+        depends_on:
+            - database
+        networks:
+            - apinetwork
+
+volumes:
+    db_data:
