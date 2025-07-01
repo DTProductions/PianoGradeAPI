@@ -21,6 +21,9 @@ namespace PianoGradeAPI.Controllers {
 		[HttpGet]
 		public async Task<string> Get([FromQuery] string username, [FromQuery] string password) {
 			AppUser user = await userManager.FindByNameAsync(username);
+			if(user == null) {
+				return "Username does not exist";
+			}
 			
 			Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.CheckPasswordSignInAsync(user, password, false);
 			if (result.Succeeded) {
