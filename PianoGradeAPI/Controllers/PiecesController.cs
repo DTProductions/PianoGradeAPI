@@ -95,18 +95,27 @@ namespace PianoGradeAPI.Controllers {
 
 		[HttpPost]
 		public async Task<ActionResult> InsertPiece([FromBody] InsertPieceDto insertPieceDto) {
-
-			// composer and arrangers should already exist before registering a piece
-			List<Composer> composers = gradesContext.Composers
+			// composers and arrangers should already exist before registering a piece
+			List<Composer> composers = [];
+			if (insertPieceDto.ComposerIds.Count > 0) {
+				composers = gradesContext.Composers
 				.Where(c => insertPieceDto.ComposerIds.Contains(c.Id))
 				.ToList();
 
-			List<Arranger> arrangers = gradesContext.Arrangers
+				if(composers.Count != insertPieceDto.ComposerIds.Count) {
+					return UnprocessableEntity("Invalid composer id");
+				}
+			}
+
+			List<Arranger> arrangers = [];
+			if(insertPieceDto.ArrangerIds.Count > 0) {
+				arrangers = gradesContext.Arrangers
 				.Where(a => insertPieceDto.ArrangerIds.Contains(a.Id))
 				.ToList();
 
-			if (composers.Count == 0 || arrangers.Count == 0) {
-				return UnprocessableEntity();
+				if(arrangers.Count != insertPieceDto.ArrangerIds.Count) {
+					return UnprocessableEntity("Invalid arranger id");
+				}
 			}
 
 			List<Grade> grades = insertPieceDto.Grades.Select(g => {
