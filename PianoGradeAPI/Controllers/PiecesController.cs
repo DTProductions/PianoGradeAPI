@@ -27,7 +27,7 @@ namespace PianoGradeAPI.Controllers {
 
 			if (title != null)
             {
-				query = query.Where(p => p.Name.ToUpper().Contains(title.ToUpper()));
+				query = query.Where(p => p.Title.ToUpper().Contains(title.ToUpper()));
             }
 
 			if(composerName != null) {
@@ -48,7 +48,7 @@ namespace PianoGradeAPI.Controllers {
 
 			List<GetPieceDto> pieces = query.Select(p => new GetPieceDto() {
 				Id = p.Id,
-				Name = p.Name,
+				Title = p.Title,
 				Composers = p.Composers.Select(c => new GetPieceDtoComposer(){
 					Id = c.Id,
 					Name = c.Name
@@ -71,7 +71,7 @@ namespace PianoGradeAPI.Controllers {
 		public async Task<ActionResult<GetPieceDto>> GetPieceById(int id) {
 			GetPieceDto? piece = await gradesContext.Pieces.Where(p => p.Id == id).Select(p => new GetPieceDto() {
 				Id = p.Id,
-				Name = p.Name,
+				Title = p.Title,
 				Composers = p.Composers.Select(c => new GetPieceDtoComposer() {
 					Id = c.Id,
 					Name = c.Name
@@ -124,7 +124,7 @@ namespace PianoGradeAPI.Controllers {
 				}).ToList();
 
 			Piece pieceToAdd = new Piece() {
-				Name = insertPieceDto.Title,
+				Title = insertPieceDto.Title,
 				Composers = composers,
 				Arrangers = arrangers,
 				Grades = grades
@@ -170,7 +170,7 @@ namespace PianoGradeAPI.Controllers {
 				}
 			}
 
-			pieceToUpdate.Name = updatePieceDto.Title;
+			pieceToUpdate.Title = updatePieceDto.Title;
 			pieceToUpdate.Grades = grades;
 			pieceToUpdate.Composers = composers;
 			pieceToUpdate.Arrangers = arrangers;

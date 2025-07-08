@@ -17,5 +17,15 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Scripts\20250708_01_ChangePieceNameColumnToTitle.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Scripts\20250708_01_ChangePieceNameColumnToTitle.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 
 </Project>
