@@ -27,15 +27,15 @@ namespace PianoGradeAPI.Controllers {
 
 			if (title != null)
             {
-				query = query.Where(p => p.Name.Contains(title));
+				query = query.Where(p => p.Name.ToUpper().Contains(title.ToUpper()));
             }
 
 			if(composerName != null) {
-				query = query.Where(p => p.Composers.Any(c => c.Name.Contains(composerName)));
+				query = query.Where(p => p.Composers.Any(c => c.Name.ToUpper().Contains(composerName.ToUpper())));
 			}
 
 			if(arrangerName != null) {
-				query = query.Where(p => p.Arrangers.Any(a => a.Name.Contains(arrangerName)));
+				query = query.Where(p => p.Arrangers.Any(a => a.Name.ToUpper().Contains(arrangerName.ToUpper())));
 			}
 
 			if(gradingSystem != null) {
