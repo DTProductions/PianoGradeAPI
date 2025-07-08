@@ -26,7 +26,7 @@ namespace PianoGradeAPI.Controllers {
 			}
 
 			if (name != null) {
-				query = query.Where(a => a.Name.Contains(name));
+				query = query.Where(a => a.Name.ToUpper().Contains(name.ToUpper()));
 			}
 
 			List<GetArrangerDto> arrangers = query.Select(a => new GetArrangerDto() {
