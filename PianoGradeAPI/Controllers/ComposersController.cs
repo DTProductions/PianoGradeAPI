@@ -32,7 +32,7 @@ namespace PianoGradeAPI.Controllers
 			}
 
 			if (name != null) {
-                query = query.Where(c => c.Name.Contains(name));
+                query = query.Where(c => c.Name.ToUpper().Contains(name.ToUpper()));
 			}
 
 			List<GetComposerDto> composers = query.Select(c=> new GetComposerDto() {
