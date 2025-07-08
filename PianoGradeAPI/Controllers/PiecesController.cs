@@ -148,13 +148,27 @@ namespace PianoGradeAPI.Controllers {
 			}).ToList();
 
 			// composer and arrangers should already exist before registering a piece
-			List<Composer> composers = gradesContext.Composers
+			List<Composer> composers = [];
+			if (updatePieceDto.ComposerIds.Count > 0) {
+				composers = gradesContext.Composers
 				.Where(c => updatePieceDto.ComposerIds.Contains(c.Id))
 				.ToList();
 
-			List<Arranger> arrangers = gradesContext.Arrangers
+				if (composers.Count != updatePieceDto.ComposerIds.Count) {
+					return UnprocessableEntity("Invalid composer id");
+				}
+			}
+
+			List<Arranger> arrangers = [];
+			if (updatePieceDto.ArrangerIds.Count > 0) {
+				arrangers = gradesContext.Arrangers
 				.Where(a => updatePieceDto.ArrangerIds.Contains(a.Id))
 				.ToList();
+
+				if (arrangers.Count != updatePieceDto.ArrangerIds.Count) {
+					return UnprocessableEntity("Invalid arranger id");
+				}
+			}
 
 			pieceToUpdate.Name = updatePieceDto.Title;
 			pieceToUpdate.Grades = grades;
