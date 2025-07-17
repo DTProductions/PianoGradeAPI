@@ -4,10 +4,14 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using PianoGradeAPI.Contexts;
+using PianoGradeAPI.Entities;
+using PianoGradeAPI.Stores;
 using System.Net;
 
-namespace PianoGradeAPI {
-	public class Program {
+namespace PianoGradeAPI
+{
+    public class Program {
 		public static void Main(string[] args) {
 			var builder = WebApplication.CreateBuilder(args);
 
@@ -20,10 +24,10 @@ namespace PianoGradeAPI {
 			builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme);
 			builder.Services.AddAuthorization();
 
-			builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<GradesContext>().AddDefaultTokenProviders();
+			builder.Services.AddIdentity<AppUserEntity, AppRoleEntity>().AddEntityFrameworkStores<GradesContext>().AddDefaultTokenProviders();
 
-			builder.Services.AddTransient<IUserStore<AppUser>, CustomUserStore>();
-			builder.Services.AddTransient<IRoleStore<AppRole>, CustomRoleStore>();
+			builder.Services.AddTransient<IUserStore<AppUserEntity>, CustomUserStore>();
+			builder.Services.AddTransient<IRoleStore<AppRoleEntity>, CustomRoleStore>();
 
 			builder.Services.ConfigureApplicationCookie(o => {
 				o.ExpireTimeSpan = TimeSpan.FromMinutes(30);

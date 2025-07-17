@@ -2,15 +2,17 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using PianoGradeAPI.Entities;
 
-namespace PianoGradeAPI.Controllers {
-	[Route("[controller]")]
+namespace PianoGradeAPI.Controllers
+{
+    [Route("[controller]")]
 	[ApiController]
 	public class AuthTestController : ControllerBase {
 
-		private UserManager<AppUser> userManager;
+		private UserManager<AppUserEntity> userManager;
 
-		public AuthTestController(UserManager<AppUser> userManager) {
+		public AuthTestController(UserManager<AppUserEntity> userManager) {
 			this.userManager = userManager;
 		}
 

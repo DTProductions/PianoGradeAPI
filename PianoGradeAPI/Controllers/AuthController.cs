@@ -1,17 +1,19 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using PianoGradeAPI.Entities;
 
-namespace PianoGradeAPI.Controllers {
-	[Route("[controller]")]
+namespace PianoGradeAPI.Controllers
+{
+    [Route("[controller]")]
 	[ApiController]
 	public class AuthController : ControllerBase {
 
 		private readonly ILogger<ComposersController> logger;
-		private SignInManager<AppUser> signInManager;
-		private UserManager<AppUser> userManager;
-		private IPasswordHasher<AppUser> passwordHasher;
+		private SignInManager<AppUserEntity> signInManager;
+		private UserManager<AppUserEntity> userManager;
+		private IPasswordHasher<AppUserEntity> passwordHasher;
 
-		public AuthController(ILogger<ComposersController> logger, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IPasswordHasher<AppUser> passwordHasher) {
+		public AuthController(ILogger<ComposersController> logger, SignInManager<AppUserEntity> signInManager, UserManager<AppUserEntity> userManager, IPasswordHasher<AppUserEntity> passwordHasher) {
 			this.logger = logger;
 			this.signInManager = signInManager;
 			this.userManager = userManager;
@@ -20,7 +22,7 @@ namespace PianoGradeAPI.Controllers {
 
 		[HttpGet]
 		public async Task<string> Get([FromQuery] string username, [FromQuery] string password) {
-			AppUser user = await userManager.FindByNameAsync(username);
+			AppUserEntity user = await userManager.FindByNameAsync(username);
 			if(user == null) {
 				return "Username does not exist";
 			}
@@ -42,7 +44,7 @@ namespace PianoGradeAPI.Controllers {
 				return $"User with username {username} already exists";
 			}
 
-			AppUser user = new AppUser() { UserName = username };
+			AppUserEntity user = new AppUserEntity() { UserName = username };
 			string hashedPassword = passwordHasher.HashPassword(user, password);
 			user.PasswordHash = hashedPassword;
 

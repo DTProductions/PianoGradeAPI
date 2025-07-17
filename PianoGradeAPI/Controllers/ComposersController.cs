@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PianoGradeAPI.Contexts;
 using PianoGradeAPI.Dtos;
+using PianoGradeAPI.Entities;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -22,7 +24,7 @@ namespace PianoGradeAPI.Controllers
 
         [HttpGet]
         public List<GetComposerDto> GetComposer([FromQuery] string? name, [FromQuery] int? sinceId, [FromQuery] int? limit) {
-			IQueryable<Composer> query = gradesContext.Composers;
+			IQueryable<ComposerEntity> query = gradesContext.Composers;
 			if (sinceId != null) {
 				query = query.OrderBy(c => c.Id).Where(c => c.Id > sinceId);
 			}
@@ -65,7 +67,7 @@ namespace PianoGradeAPI.Controllers
 
 		[HttpPost]
 		public async Task<ActionResult> InsertComposer([FromBody] InsertComposerDto insertComposerDto) {
-			Composer composerToAdd = new Composer() {
+			ComposerEntity composerToAdd = new ComposerEntity() {
 				Name = insertComposerDto.Name,
 				Era = insertComposerDto.Era,
 				Nationality = insertComposerDto.Nationality
@@ -78,7 +80,7 @@ namespace PianoGradeAPI.Controllers
 
         [HttpPut]
         public async Task<ActionResult> UpdateComposer([FromBody] UpdateComposerDto updateComposerDto) {
-            Composer? composerToUpdate = await gradesContext.Composers.FirstOrDefaultAsync(c => c.Id == updateComposerDto.Id);
+            ComposerEntity? composerToUpdate = await gradesContext.Composers.FirstOrDefaultAsync(c => c.Id == updateComposerDto.Id);
             if(composerToUpdate == null) {
                 return UnprocessableEntity();
             }
@@ -95,7 +97,7 @@ namespace PianoGradeAPI.Controllers
 
         [HttpDelete]
         public async Task<ActionResult> DeleteComposer([FromQuery] int id) {
-            Composer? composerToDelete = await gradesContext.Composers.Include(c => c.Pieces).FirstOrDefaultAsync(c => c.Id == id);
+            ComposerEntity? composerToDelete = await gradesContext.Composers.Include(c => c.Pieces).FirstOrDefaultAsync(c => c.Id == id);
             if(composerToDelete == null) {
                 return UnprocessableEntity();
             }

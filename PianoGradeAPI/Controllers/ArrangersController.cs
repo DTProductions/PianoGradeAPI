@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PianoGradeAPI.Contexts;
 using PianoGradeAPI.Dtos;
+using PianoGradeAPI.Entities;
 
-namespace PianoGradeAPI.Controllers {
-	[Route("[controller]")]
+namespace PianoGradeAPI.Controllers
+{
+    [Route("[controller]")]
 	[ApiController]
 	public class ArrangersController : ControllerBase {
 		private GradesContext gradesContext;
@@ -16,7 +19,7 @@ namespace PianoGradeAPI.Controllers {
 
 		[HttpGet]
 		public List<GetArrangerDto> GetArrangers(string? name, [FromQuery] int? sinceId, [FromQuery] int? limit) {
-			IQueryable<Arranger> query = gradesContext.Arrangers;
+			IQueryable<ArrangerEntity> query = gradesContext.Arrangers;
 			if (sinceId != null) {
 				query = query.OrderBy(a => a.Id).Where(a => a.Id > sinceId);
 			}
@@ -54,7 +57,7 @@ namespace PianoGradeAPI.Controllers {
 
 		[HttpPost]
 		public async Task<ActionResult> InsertArranger([FromBody] InsertArrangerDto insertArrangerDto) {
-			Arranger arrangerToAdd = new Arranger() {
+			ArrangerEntity arrangerToAdd = new ArrangerEntity() {
 				Name = insertArrangerDto.Name
 			};
 
@@ -65,7 +68,7 @@ namespace PianoGradeAPI.Controllers {
 
 		[HttpPut]
 		public async Task<ActionResult> UpdateArranger([FromBody] UpdateArrangerDto updateArrangerDto) {
-			Arranger? arrangerToUpdate = await gradesContext.Arrangers.FirstOrDefaultAsync(a => a.Id == updateArrangerDto.Id);
+			ArrangerEntity? arrangerToUpdate = await gradesContext.Arrangers.FirstOrDefaultAsync(a => a.Id == updateArrangerDto.Id);
 			if (arrangerToUpdate == null) {
 				return UnprocessableEntity();
 			}
@@ -80,7 +83,7 @@ namespace PianoGradeAPI.Controllers {
 
 		[HttpDelete]
 		public async Task<ActionResult> DeleteArranger([FromQuery] int id) {
-			Arranger? arrangerToDelete = await gradesContext.Arrangers.Include(a => a.Pieces).FirstOrDefaultAsync(a => a.Id == id);
+			ArrangerEntity? arrangerToDelete = await gradesContext.Arrangers.Include(a => a.Pieces).FirstOrDefaultAsync(a => a.Id == id);
 			if (arrangerToDelete == null) {
 				return UnprocessableEntity();
 			}

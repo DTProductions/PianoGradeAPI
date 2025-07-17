@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PianoGradeAPI.Contexts;
 using PianoGradeAPI.Dtos;
+using PianoGradeAPI.Entities;
 using System.Collections.Generic;
 
-namespace PianoGradeAPI.Controllers {
-	[Route("[controller]")]
+namespace PianoGradeAPI.Controllers
+{
+    [Route("[controller]")]
 	[ApiController]
 	public class PiecesController : ControllerBase {
 		private GradesContext gradesContext;
@@ -16,7 +19,7 @@ namespace PianoGradeAPI.Controllers {
 
 		[HttpGet]
 		public List<GetPieceDto> GetPieces([FromQuery] string? title, [FromQuery] string? composerName, [FromQuery] string? arrangerName, [FromQuery] string? gradingSystem, string? grade, [FromQuery] int? sinceId, [FromQuery] int? limit) {
-			IQueryable<Piece> query = gradesContext.Pieces;
+			IQueryable<PieceEntity> query = gradesContext.Pieces;
 			if (sinceId != null) {
 				query = query.OrderBy(p => p.Id).Where(p => p.Id > sinceId);
 			}
@@ -96,7 +99,7 @@ namespace PianoGradeAPI.Controllers {
 		[HttpPost]
 		public async Task<ActionResult> InsertPiece([FromBody] InsertPieceDto insertPieceDto) {
 			// composers and arrangers should already exist before registering a piece
-			List<Composer> composers = [];
+			List<ComposerEntity> composers = [];
 			if (insertPieceDto.ComposerIds.Count > 0) {
 				composers = gradesContext.Composers
 				.Where(c => insertPieceDto.ComposerIds.Contains(c.Id))
@@ -107,7 +110,7 @@ namespace PianoGradeAPI.Controllers {
 				}
 			}
 
-			List<Arranger> arrangers = [];
+			List<ArrangerEntity> arrangers = [];
 			if(insertPieceDto.ArrangerIds.Count > 0) {
 				arrangers = gradesContext.Arrangers
 				.Where(a => insertPieceDto.ArrangerIds.Contains(a.Id))
@@ -118,12 +121,12 @@ namespace PianoGradeAPI.Controllers {
 				}
 			}
 
-			List<Grade> grades = insertPieceDto.Grades.Select(g => {
-					Grade gradeToAdd = new Grade() { GradingSystem = g.GradingSystem, GradeScore = g.Grade};
+			List<GradeEntity> grades = insertPieceDto.Grades.Select(g => {
+					GradeEntity gradeToAdd = new GradeEntity() { GradingSystem = g.GradingSystem, GradeScore = g.Grade};
 					return gradeToAdd;
 				}).ToList();
 
-			Piece pieceToAdd = new Piece() {
+			PieceEntity pieceToAdd = new PieceEntity() {
 				Title = insertPieceDto.Title,
 				Composers = composers,
 				Arrangers = arrangers,
@@ -137,18 +140,18 @@ namespace PianoGradeAPI.Controllers {
 
 		[HttpPut]
 		public async Task<ActionResult> UpdatePiece([FromBody] UpdatePieceDto updatePieceDto) {
-			Piece? pieceToUpdate = await gradesContext.Pieces.Include(p => p.Composers).Include(p => p.Arrangers).Include(p => p.Grades).FirstOrDefaultAsync(a => a.Id == updatePieceDto.Id);
+			PieceEntity? pieceToUpdate = await gradesContext.Pieces.Include(p => p.Composers).Include(p => p.Arrangers).Include(p => p.Grades).FirstOrDefaultAsync(a => a.Id == updatePieceDto.Id);
 			if (pieceToUpdate == null) {
 				return UnprocessableEntity();
 			}
 
-			List<Grade> grades = updatePieceDto.Grades.Select(g => {
-				Grade gradeToAdd = new Grade() { GradingSystem = g.GradingSystem, GradeScore = g.Grade};
+			List<GradeEntity> grades = updatePieceDto.Grades.Select(g => {
+				GradeEntity gradeToAdd = new GradeEntity() { GradingSystem = g.GradingSystem, GradeScore = g.Grade};
 				return gradeToAdd;
 			}).ToList();
 
 			// composer and arrangers should already exist before registering a piece
-			List<Composer> composers = [];
+			List<ComposerEntity> composers = [];
 			if (updatePieceDto.ComposerIds.Count > 0) {
 				composers = gradesContext.Composers
 				.Where(c => updatePieceDto.ComposerIds.Contains(c.Id))
@@ -159,7 +162,7 @@ namespace PianoGradeAPI.Controllers {
 				}
 			}
 
-			List<Arranger> arrangers = [];
+			List<ArrangerEntity> arrangers = [];
 			if (updatePieceDto.ArrangerIds.Count > 0) {
 				arrangers = gradesContext.Arrangers
 				.Where(a => updatePieceDto.ArrangerIds.Contains(a.Id))
@@ -183,7 +186,7 @@ namespace PianoGradeAPI.Controllers {
 
 		[HttpDelete]
 		public async Task<ActionResult> DeletePiece([FromQuery] int id) {
-			Piece? pieceToDelete = await gradesContext.Pieces.Include(p => p.Composers).Include(p => p.Arrangers).Include(p => p.Grades).FirstOrDefaultAsync(p => p.Id == id);
+			PieceEntity? pieceToDelete = await gradesContext.Pieces.Include(p => p.Composers).Include(p => p.Arrangers).Include(p => p.Grades).FirstOrDefaultAsync(p => p.Id == id);
 			if (pieceToDelete == null) {
 				return UnprocessableEntity();
 			}

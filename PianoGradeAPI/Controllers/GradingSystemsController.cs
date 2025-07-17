@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PianoGradeAPI.Contexts;
 
-namespace PianoGradeAPI.Controllers {
-	[Route("[controller]")]
+namespace PianoGradeAPI.Controllers
+{
+    [Route("[controller]")]
 	[ApiController]
 	public class GradingSystemsController : ControllerBase {
 		private GradesContext gradesContext;
