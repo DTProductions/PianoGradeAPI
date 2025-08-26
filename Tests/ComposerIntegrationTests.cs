@@ -25,11 +25,9 @@ namespace Tests {
 		[Fact]
 		public async void AllComposersReturned() {
 			HttpResponseMessage response = await client.GetAsync("/composers");
-			Assert.True(response.StatusCode == System.Net.HttpStatusCode.OK);
+			Assert.True(response.StatusCode == HttpStatusCode.OK);
 
 			List<GetComposerDto> returnedComposers = await response.Content.ReadFromJsonAsync<List<GetComposerDto>>();
-
-			ComposerEntity composer = new ComposerEntity();
 
 			GetComposerDto? john = returnedComposers.Where(c=> c.Name == "john" && c.Era == "baroque" && c.Nationality == "austrian").FirstOrDefault();
 			Assert.NotNull(john);
