@@ -4,6 +4,7 @@ using PianoGradeAPI.Contexts;
 using PianoGradeAPI.Dtos;
 using PianoGradeAPI.Entities;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 
 namespace Tests {
@@ -41,6 +42,19 @@ namespace Tests {
 
 			GetComposerDto? michael = returnedComposers.Where(c => c.Name == "michael" && c.Era == "romantic" && c.Nationality == "french").FirstOrDefault();
 			Assert.NotNull(michael);
+		}
+
+		[Fact]
+		public async void QueryByFullNameReturnsMatchingComposers() {
+			string query = "john";
+			HttpResponseMessage response = await client.GetAsync("/composers?name=" + query);
+
+			Assert.True(response.StatusCode == HttpStatusCode.OK);
+
+			List<GetComposerDto> returnedComposers = await response.Content.ReadFromJsonAsync<List<GetComposerDto>>();
+
+			Assert.True(returnedComposers.Count > 0);
+			Assert.True(returnedComposers.Where(c => c.Name == query).Count() == returnedComposers.Count);
 		}
 
 		public async Task InitializeAsync() {
