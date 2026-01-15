@@ -81,6 +81,26 @@ namespace Tests {
 			Assert.Equal(limit, returnedComposers.Count);
 		}
 
+		[Fact]
+		public async void QueryByIdReturnsMatchingComposer() {
+			HttpResponseMessage allComposersresponse = await client.GetAsync("/composers");
+			Assert.Equal(HttpStatusCode.OK, allComposersresponse.StatusCode);
+
+			List<GetComposerDto> allComposers = await allComposersresponse.Content.ReadFromJsonAsync<List<GetComposerDto>>();
+			Assert.NotEmpty(allComposers);
+
+			foreach (GetComposerDto composer in allComposers) {
+				HttpResponseMessage composerByIdResponse = await client.GetAsync("/composers/" + composer.Id);
+				Assert.Equal(HttpStatusCode.OK, composerByIdResponse.StatusCode);
+
+				GetComposerDto returnedComposer = await composerByIdResponse.Content.ReadFromJsonAsync<GetComposerDto>();
+				Assert.Equal(composer.Id, returnedComposer.Id);
+				Assert.Equal(composer.Name, returnedComposer.Name);
+				Assert.Equal(composer.Nationality, returnedComposer.Nationality);
+				Assert.Equal(composer.Era, returnedComposer.Era);
+			}
+		}
+
 		public async Task InitializeAsync() {
 			await DatabaseSeeder.Seed(gradesContext);
 		}
