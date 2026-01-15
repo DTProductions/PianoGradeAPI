@@ -69,6 +69,18 @@ namespace Tests {
 			Assert.True(returnedComposers.Where(c => c.Name.Contains(query)).Count() == returnedComposers.Count);
 		}
 
+		[Fact]
+		public async void ComposersQueryIsLimited() {
+			int limit = 1;
+			HttpResponseMessage response = await client.GetAsync("/composers?limit=" + limit);
+
+			Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+			List<GetComposerDto> returnedComposers = await response.Content.ReadFromJsonAsync<List<GetComposerDto>>();
+
+			Assert.Equal(limit, returnedComposers.Count);
+		}
+
 		public async Task InitializeAsync() {
 			await DatabaseSeeder.Seed(gradesContext);
 		}
