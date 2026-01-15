@@ -8,8 +8,9 @@ using System.Net;
 using System.Net.Http;
 
 namespace Tests {
+
 	public class ComposerIntegrationTests : IClassFixture<CustomWebApplicationFactory<Program>>, IAsyncLifetime {
-		
+
 		private CustomWebApplicationFactory<Program> webApplicationFactory;
 		private HttpClient client;
 		private GradesContext gradesContext;
@@ -53,6 +54,19 @@ namespace Tests {
 
 			Assert.True(returnedComposers.Count > 0);
 			Assert.True(returnedComposers.Where(c => c.Name == query).Count() == returnedComposers.Count);
+		}
+
+		[Fact]
+		public async void QueryByPartialNameReturnsMatchingComposers() {
+			string query = "a";
+			HttpResponseMessage response = await client.GetAsync("/composers?name=" + query);
+
+			Assert.True(response.StatusCode == HttpStatusCode.OK);
+
+			List<GetComposerDto> returnedComposers = await response.Content.ReadFromJsonAsync<List<GetComposerDto>>();
+
+			Assert.True(returnedComposers.Count > 0);
+			Assert.True(returnedComposers.Where(c => c.Name.Contains(query)).Count() == returnedComposers.Count);
 		}
 
 		public async Task InitializeAsync() {
